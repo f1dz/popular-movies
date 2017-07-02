@@ -1,7 +1,11 @@
 package in.khofid.popularmovies;
 
 import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -121,6 +125,10 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mLoading.setVisibility(View.VISIBLE);
+            if(!isOnline()){
+                Toast.makeText(activity, getString(R.string.error_no_internet), Toast.LENGTH_LONG).show();
+                activity.finishAffinity();
+            }
         }
 
         @Override
@@ -128,5 +136,12 @@ public class MainActivity extends AppCompatActivity {
             mLoading.setVisibility(View.INVISIBLE);
             mMoviesGrid.setAdapter(movies);
         }
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }
