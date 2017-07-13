@@ -49,7 +49,11 @@ public class MoviesAdapter extends BaseAdapter {
         }
 
         ImageView imageView = (ImageView) convertView.findViewById(R.id.movie_image);
-        Picasso.with(context).load(entry.poster_path).into(imageView);
+        Picasso
+                .with(context)
+                .load(entry.poster_path)
+                .placeholder(R.drawable.movie_icon)
+                .into(imageView);
 
         TextView movieName = (TextView) convertView.findViewById(R.id.tv_movie_title);
         movieName.setText(entry.title);
