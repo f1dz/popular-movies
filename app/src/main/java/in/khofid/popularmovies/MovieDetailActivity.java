@@ -94,8 +94,8 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Movie movie) {
-            Picasso.with(context).load(movie.getPoster_path()).into(mImagePoster);
-            Picasso.with(context).load(movie.getBackdrop_path()).into(mImageBackdrop);
+            Picasso.with(context).load(movie.getPoster_path()).placeholder(R.drawable.movie_icon).into(mImagePoster);
+            Picasso.with(context).load(movie.getBackdrop_path()).placeholder(R.drawable.movie_icon).into(mImageBackdrop);
             mTvMovieTitle.setText(movie.getTitle());
             mTvReleaseDate.setText(movie.getRelease_date());
             mTvRuntime.setText(String.valueOf(movie.getRuntime()) + getString(R.string.minutes));
