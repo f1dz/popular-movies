@@ -1,11 +1,10 @@
 package in.khofid.popularmovies.utilities;
 
-import android.app.Activity;
 import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,23 +16,56 @@ import in.khofid.popularmovies.R;
  * Created by ofid on 6/20/17.
  */
 
-public class MoviesAdapter extends BaseAdapter {
-    private final Context context;
-    private Movies[] movies;
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
+    private Context mContext;
+    private Movies[] mMovies;
+    final private MoviesAdapterOnClickHandler mClickHandler;
 
-    public MoviesAdapter(Activity context, Movies[] movies) {
-        this.context = context;
-        this.movies = movies;
+    public interface MoviesAdapterOnClickHandler{
+        void onCLick(Movies movies);
+    }
+
+    public MoviesAdapter(MoviesAdapterOnClickHandler clickHandler) {
+        this.mContext = (Context) clickHandler;
+        this.mClickHandler = clickHandler;
+    }
+
+    public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        public final ImageView moviePoster;
+        public final TextView movieTitle;
+
+        public MoviesAdapterViewHolder(View view){
+            super(view);
+            moviePoster = (ImageView) view.findViewById(R.id.movie_image);
+            movieTitle = (TextView) view.findViewById(R.id.tv_movie_title);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int adapterPosition = getAdapterPosition();
+            Movies movies = mMovies[adapterPosition];
+            mClickHandler.onCLick(movies);
+        }
     }
 
     @Override
-    public int getCount() {
-        return movies.length;
+    public MoviesAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        int id = R.layout.movie_item;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+        View view = inflater.inflate(id, parent, false);
+        return new MoviesAdapterViewHolder(view);
     }
 
     @Override
-    public Object getItem(int i) {
-        return movies[i];
+    public void onBindViewHolder(MoviesAdapter.MoviesAdapterViewHolder holder, int position) {
+        Movies entry = mMovies[position];
+        Picasso.with(mContext)
+                .load(entry.poster_path)
+                .placeholder(R.drawable.movie_icon)
+                .into(holder.moviePoster);
+        holder.movieTitle.setText(entry.title);
     }
 
     @Override
@@ -42,23 +74,14 @@ public class MoviesAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        Movies entry = movies[position];
-        if(null == convertView){
-            convertView = LayoutInflater.from(context).inflate(R.layout.movie_item, parent, false);
-        }
+    public int getItemCount() {
+        if(null == mMovies) return 0;
+        return mMovies.length;
+    }
 
-        ImageView imageView = (ImageView) convertView.findViewById(R.id.movie_image);
-        Picasso
-                .with(context)
-                .load(entry.poster_path)
-                .placeholder(R.drawable.movie_icon)
-                .into(imageView);
-
-        TextView movieName = (TextView) convertView.findViewById(R.id.tv_movie_title);
-        movieName.setText(entry.title);
-
-        return convertView;
+    public void setMoviesData(Movies[] movies){
+        mMovies = movies;
+        notifyDataSetChanged();
     }
 
 }

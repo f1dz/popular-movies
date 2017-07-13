@@ -9,6 +9,9 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,11 +30,12 @@ import in.khofid.popularmovies.utilities.MoviesAdapter;
 import in.khofid.popularmovies.utilities.MoviesJsonUtils;
 import in.khofid.popularmovies.utilities.NetworkUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler{
 
     ProgressBar mLoading;
     TextView mError;
-    GridView mMoviesGrid;
+    RecyclerView mRecyclerView;
+    MoviesAdapter mMoviesAdapter;
 
     public Activity activity = this;
     static String SORT_POPULAR = "popular";
@@ -43,19 +47,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
+        mMoviesAdapter = new MoviesAdapter(this);
+
         mLoading = (ProgressBar) findViewById(R.id.pb_loading_indicator);
         mError = (TextView) findViewById(R.id.tv_error_message_display);
-        mMoviesGrid = (GridView) findViewById(R.id.movies_grid);
 
+        int columnsNumber = getResources().getInteger(R.integer.columns_number);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this,columnsNumber));
+        mRecyclerView.setAdapter(mMoviesAdapter);
         loadMoviesData();
-
-        mMoviesGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                Movies movies = (Movies) mMoviesGrid.getItemAtPosition(pos);
-                showDetailMovie(String.valueOf(movies.getMovieId()));
-            }
-        });
     }
 
     @Override
@@ -87,12 +88,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void showMoviesDataView(){
         mError.setVisibility(View.INVISIBLE);
-        mMoviesGrid.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     private void showError(){
         mError.setVisibility(View.VISIBLE);
-        mMoviesGrid.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.INVISIBLE);
     }
 
     public void showDetailMovie(String movieId){
@@ -102,17 +103,22 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public class FetchMoviesTask extends AsyncTask<String, Void, MoviesAdapter>{
+    @Override
+    public void onCLick(Movies movies) {
+        showDetailMovie(String.valueOf(movies.getMovieId()));
+    }
+
+    public class FetchMoviesTask extends AsyncTask<String, Void, Movies[]>{
 
         @Override
-        protected MoviesAdapter doInBackground(String... params) {
+        protected Movies[] doInBackground(String... params) {
             if(params.length == 0) {
                 URL moviesUrl = NetworkUtils.buildUrl(sortBy);
 
                 try{
                     String jsonMovies = NetworkUtils.getResponseFromHttpUrl(moviesUrl);
                     Movies[] simpleJsonMoviesData = MoviesJsonUtils.getSimpleStringFromJson(MainActivity.this,jsonMovies);
-                    return new MoviesAdapter(activity, simpleJsonMoviesData);
+                    return simpleJsonMoviesData;//new MoviesAdapter(activity, simpleJsonMoviesData);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -132,9 +138,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(MoviesAdapter movies) {
+        protected void onPostExecute(Movies[] movies) {
             mLoading.setVisibility(View.INVISIBLE);
-            mMoviesGrid.setAdapter(movies);
+            if(movies != null){
+                showMoviesDataView();
+                mMoviesAdapter.setMoviesData(movies);
+            }
         }
     }
 
