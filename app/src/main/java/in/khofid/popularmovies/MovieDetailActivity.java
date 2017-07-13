@@ -94,13 +94,13 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Movie movie) {
-            Picasso.with(context).load(movie.getPoster_path()).placeholder(R.drawable.movie_icon).into(mImagePoster);
-            Picasso.with(context).load(movie.getBackdrop_path()).placeholder(R.drawable.movie_icon).into(mImageBackdrop);
-            mTvMovieTitle.setText(movie.getTitle());
-            mTvReleaseDate.setText(movie.getRelease_date());
-            mTvRuntime.setText(String.valueOf(movie.getRuntime()) + getString(R.string.minutes));
-            mTvVoteAverage.setText(String.valueOf(movie.getVote_average()) + getString(R.string.vote_per_10));
-            mTvOverview.setText(movie.getOverview());
+            Picasso.with(context).load(movie.poster_path).placeholder(R.drawable.movie_icon).into(mImagePoster);
+            Picasso.with(context).load(movie.backdrop_path).placeholder(R.drawable.movie_icon).into(mImageBackdrop);
+            mTvMovieTitle.setText(movie.title);
+            mTvReleaseDate.setText(movie.release_date);
+            mTvRuntime.setText(String.valueOf(movie.runtime) + getString(R.string.minutes));
+            mTvVoteAverage.setText(String.valueOf(movie.vote_average) + getString(R.string.vote_per_10));
+            mTvOverview.setText(movie.overview);
             mProgressDetail.setVisibility(View.INVISIBLE);
         }
     }
