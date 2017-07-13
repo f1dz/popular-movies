@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public Activity activity = this;
     static String SORT_POPULAR = "popular";
     static String SORT_RATING = "top_rated";
-    String sortBy = SORT_POPULAR;
+    public String sortBy = SORT_POPULAR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,9 +131,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         protected void onPreExecute() {
             super.onPreExecute();
             mLoading.setVisibility(View.VISIBLE);
-            if(!isOnline()){
+            if(!NetworkUtils.isOnline(activity)){
+                showError();
                 Toast.makeText(activity, getString(R.string.error_no_internet), Toast.LENGTH_LONG).show();
-                activity.finishAffinity();
             }
         }
 
@@ -145,12 +145,5 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
                 mMoviesAdapter.setMoviesData(movies);
             }
         }
-    }
-
-    public boolean isOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }
