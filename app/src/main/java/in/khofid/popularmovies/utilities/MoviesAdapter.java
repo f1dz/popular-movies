@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import in.khofid.popularmovies.R;
 
 /**
@@ -31,13 +33,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
     }
 
     public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        public final ImageView moviePoster;
-        public final TextView movieTitle;
+        @BindView(R.id.movie_image) ImageView moviePoster;
+        @BindView(R.id.tv_movie_title) TextView movieTitle;
 
         public MoviesAdapterViewHolder(View view){
             super(view);
-            moviePoster = (ImageView) view.findViewById(R.id.movie_image);
-            movieTitle = (TextView) view.findViewById(R.id.tv_movie_title);
+            ButterKnife.bind(this, view);
             view.setOnClickListener(this);
         }
 
