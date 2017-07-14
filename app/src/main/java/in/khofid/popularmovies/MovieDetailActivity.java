@@ -1,36 +1,39 @@
 package in.khofid.popularmovies;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 
+import butterknife.BindDrawable;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import in.khofid.popularmovies.utilities.Movie;
 import in.khofid.popularmovies.utilities.MovieJsonUtils;
 import in.khofid.popularmovies.utilities.NetworkUtils;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
-    ImageView mImagePoster;
-    ImageView mImageBackdrop;
-    TextView mTvMovieTitle;
-    TextView mTvReleaseDate;
-    TextView mTvRuntime;
-    TextView mTvVoteAverage;
-    TextView mTvOverview;
-    ScrollView mScrollViewDetail;
-    ProgressBar mProgressDetail;
+    @BindView(R.id.img_poster_detail) ImageView mImagePoster;
+    @BindView(R.id.img_backdrop) ImageView mImageBackdrop;
+    @BindView(R.id.tv_movie_title) TextView mTvMovieTitle;
+    @BindView(R.id.tv_release_date) TextView mTvReleaseDate;
+    @BindView(R.id.tv_runtime) TextView mTvRuntime;
+    @BindView(R.id.tv_vote_average) TextView mTvVoteAverage;
+    @BindView(R.id.tv_overview) TextView mTvOverview;
+    @BindView(R.id.pb_loading_indicator) ProgressBar mProgressDetail;
+    @BindDrawable(R.drawable.movie_icon) Drawable movie_icon;
+
     String movieID;
 
     public Context context = this;
@@ -39,19 +42,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
-
-        mImagePoster = (ImageView) findViewById(R.id.img_poster_detail);
-        mImageBackdrop = (ImageView) findViewById(R.id.img_backdrop);
-        mTvMovieTitle = (TextView) findViewById(R.id.tv_movie_title);
-        mTvReleaseDate = (TextView) findViewById(R.id.tv_release_date);
-        mTvRuntime = (TextView) findViewById(R.id.tv_runtime);
-        mTvVoteAverage = (TextView) findViewById(R.id.tv_vote_average);
-        mTvOverview = (TextView) findViewById(R.id.tv_overview);
-        mScrollViewDetail = (ScrollView) findViewById(R.id.scroll_view_detail);
-        mProgressDetail = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-
+        ButterKnife.bind(this);
         showMovieDetail();
-
     }
 
     private void showMovieDetail(){
@@ -68,7 +60,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
     }
 
-    public class FetchMovieTask extends AsyncTask<String, Void, Movie>{
+    private class FetchMovieTask extends AsyncTask<String, Void, Movie>{
 
         @Override
         protected Movie doInBackground(String... params) {
@@ -77,8 +69,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
                 try{
                     String jsonMovie = NetworkUtils.getResponseFromHttpUrl(moviesUrl);
-                    Movie simpleJsonMovieData = MovieJsonUtils.getSimpleStringFromJson(MovieDetailActivity.this,jsonMovie);
-                    return simpleJsonMovieData;
+                    return MovieJsonUtils.getSimpleStringFromJson(MovieDetailActivity.this,jsonMovie);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -94,12 +85,16 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Movie movie) {
-            Picasso.with(context).load(movie.poster_path).placeholder(R.drawable.movie_icon).into(mImagePoster);
-            Picasso.with(context).load(movie.backdrop_path).placeholder(R.drawable.movie_icon).into(mImageBackdrop);
+            Picasso.with(context).load(movie.poster_path).placeholder(movie_icon).into(mImagePoster);
+            Picasso.with(context).load(movie.backdrop_path).placeholder(movie_icon).into(mImageBackdrop);
             mTvMovieTitle.setText(movie.title);
             mTvReleaseDate.setText(movie.release_date);
-            mTvRuntime.setText(String.valueOf(movie.runtime) + getString(R.string.minutes));
-            mTvVoteAverage.setText(String.valueOf(movie.vote_average) + getString(R.string.vote_per_10));
+
+            String runtime = String.valueOf(movie.runtime) + getString(R.string.minutes);
+            mTvRuntime.setText(runtime);
+
+            String vote = String.valueOf(movie.vote_average) + getString(R.string.vote_per_10);
+            mTvVoteAverage.setText(vote);
             mTvOverview.setText(movie.overview);
             mProgressDetail.setVisibility(View.INVISIBLE);
         }
