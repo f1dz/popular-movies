@@ -1,30 +1,24 @@
 package in.khofid.popularmovies;
 
 import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.net.URL;
 
-import in.khofid.popularmovies.utilities.Movie;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import in.khofid.popularmovies.utilities.Movies;
 import in.khofid.popularmovies.utilities.MoviesAdapter;
 import in.khofid.popularmovies.utilities.MoviesJsonUtils;
@@ -32,31 +26,36 @@ import in.khofid.popularmovies.utilities.NetworkUtils;
 
 public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler{
 
-    ProgressBar mLoading;
-    TextView mError;
-    RecyclerView mRecyclerView;
+    @BindView(R.id.pb_loading_indicator) ProgressBar mLoading;
+    @BindView(R.id.tv_error_message_display) TextView mError;
+    @BindView(R.id.rv_movies) RecyclerView mRecyclerView;
     MoviesAdapter mMoviesAdapter;
+    Movies[] mMovies;
 
     public Activity activity = this;
     static String SORT_POPULAR = "popular";
     static String SORT_RATING = "top_rated";
     public String sortBy = SORT_POPULAR;
 
+    private static final String MOVIES_PARCEL = "movies_parcel";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.rv_movies);
         mMoviesAdapter = new MoviesAdapter(this);
-
-        mLoading = (ProgressBar) findViewById(R.id.pb_loading_indicator);
-        mError = (TextView) findViewById(R.id.tv_error_message_display);
 
         int columnsNumber = getResources().getInteger(R.integer.columns_number);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this,columnsNumber));
         mRecyclerView.setAdapter(mMoviesAdapter);
-        loadMoviesData();
+
+        if(savedInstanceState != null && savedInstanceState.containsKey(MOVIES_PARCEL))
+            loadMoviesFromBundle(savedInstanceState);
+        else
+            loadMoviesData();
+
     }
 
     @Override
@@ -86,6 +85,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         new FetchMoviesTask().execute();
     }
 
+    private void loadMoviesFromBundle(Bundle bundle) {
+        showMoviesDataView();
+        mMovies = (Movies[]) bundle.getParcelableArray(MOVIES_PARCEL);
+        showMoviesDataView();
+        mMoviesAdapter.setMoviesData(mMovies);
+
+    }
+
     private void showMoviesDataView(){
         mError.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
@@ -104,8 +111,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArray(MOVIES_PARCEL, mMovies);
+    }
+
+    @Override
     public void onCLick(Movies movies) {
-        showDetailMovie(String.valueOf(movies.getMovieId()));
+        showDetailMovie(String.valueOf(movies.movie_id));
     }
 
     public class FetchMoviesTask extends AsyncTask<String, Void, Movies[]>{
@@ -117,8 +130,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
                 try{
                     String jsonMovies = NetworkUtils.getResponseFromHttpUrl(moviesUrl);
-                    Movies[] simpleJsonMoviesData = MoviesJsonUtils.getSimpleStringFromJson(MainActivity.this,jsonMovies);
-                    return simpleJsonMoviesData;//new MoviesAdapter(activity, simpleJsonMoviesData);
+                    mMovies = MoviesJsonUtils.getSimpleStringFromJson(MainActivity.this,jsonMovies);
+                    return mMovies;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
