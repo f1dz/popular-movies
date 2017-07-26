@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/video_image"
+        android:layout_width="320dp"
+        android:layout_height="180dp"
+        android:contentDescription="@string/video_description"
+        android:scaleType="centerCrop" />
+
+    <ImageView
+        android:id="@+id/play_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerInside"
+        android:layout_gravity="center_horizontal|center_vertical"
+        android:src="@drawable/youtube"/>
+
+    <TextView
+        android:id="@+id/tv_video_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#8888"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="#FFF" />
+</FrameLayout>

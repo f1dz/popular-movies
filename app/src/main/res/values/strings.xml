@@ -5,6 +5,7 @@
     <string name="error_message">Ooops! Something went wrong.</string>
     <string name="error_no_internet">No internet connection, please check your internet connection</string>
     <string name="poster_description">Movie Image</string>
+    <string name="video_description">Video</string>
     <string name="backdrop_description">Backdrop Image</string>
     <string name="minutes"> min</string>
     <string name="vote_per_10">/10</string>

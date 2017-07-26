@@ -19,7 +19,7 @@ import java.util.Scanner;
 public final class NetworkUtils {
 
     private static final String API_KEY = "api_key";
-    private static final String API_URL = "http://api.themoviedb.org/3/movie";
+    private static final String API_URL = "http://api.themoviedb.org";
     private static final String PATH = "/3/movie/";
     public static final String IMG_URL = "http://image.tmdb.org/t/p/w185";
     public static final String IMG_URL_W342 = "http://image.tmdb.org/t/p/w342";

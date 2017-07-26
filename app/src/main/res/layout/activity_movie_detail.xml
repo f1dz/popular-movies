@@ -1,47 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#212121"
-    android:orientation="horizontal"
-    tools:context="in.khofid.popularmovies.MovieDetailActivity">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_view_detail"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#212121">
 
-    <FrameLayout
-        android:id="@+id/frame_backdrop"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        tools:context="in.khofid.popularmovies.MovieDetailActivity">
 
-        <ImageView
-            android:id="@+id/img_backdrop"
+        <FrameLayout
+            android:id="@+id/frame_backdrop"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:contentDescription="@string/backdrop_description"
-            android:scaleType="centerCrop" />
+            android:layout_height="150dp">
 
-        <TextView
-            android:id="@+id/tv_movie_title"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="#8888"
-            android:gravity="start"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:textColor="#FAFAFA"
-            android:textSize="26sp"
-            android:textStyle="bold" />
-    </FrameLayout>
+            <ImageView
+                android:id="@+id/img_backdrop"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:contentDescription="@string/backdrop_description"
+                android:scaleType="centerCrop" />
 
-    <ScrollView
-        android:id="@+id/scroll_view_detail"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/frame_backdrop">
+            <TextView
+                android:id="@+id/tv_movie_title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="#8888"
+                android:gravity="start"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:textColor="#FAFAFA"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+        </FrameLayout>
 
         <RelativeLayout
+            android:id="@+id/rl_details"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:layout_below="@id/frame_backdrop"
+            android:layout_marginBottom="0dp">
 
             <ImageView
                 android:id="@+id/img_poster_detail"
@@ -93,13 +95,19 @@
                 android:textColor="#FAFAFA" />
         </RelativeLayout>
 
-    </ScrollView>
-    <ProgressBar
-        android:id="@+id/pb_loading_indicator"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:indeterminate="true"
-        android:layout_centerInParent="true"
-        android:visibility="invisible" />
-</RelativeLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_videos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rl_details"/>
+
+        <ProgressBar
+            android:id="@+id/pb_loading_indicator"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="invisible" />
+    </RelativeLayout>
+</ScrollView>
