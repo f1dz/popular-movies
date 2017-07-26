@@ -92,14 +92,42 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingStart="10dp"
-                android:textColor="#FAFAFA" />
+                android:textColor="#FAFAFA"/>
         </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_trailers_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rl_details"
+            android:textColor="#FAFAFA"
+            android:textSize="20sp"
+            android:paddingLeft="10dp"
+            android:textStyle="bold"
+            android:text="@string/trailers_title"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_videos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/rl_details"/>
+            android:layout_below="@+id/tv_trailers_title"/>
+
+        <TextView
+            android:id="@+id/tv_reviews_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rv_videos"
+            android:textColor="#FAFAFA"
+            android:textSize="20sp"
+            android:paddingLeft="10dp"
+            android:textStyle="bold"
+            android:text="@string/reviews_title"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_reviews"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_reviews_title"/>
 
         <ProgressBar
             android:id="@+id/pb_loading_indicator"
