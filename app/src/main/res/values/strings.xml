@@ -11,4 +11,6 @@
     <string name="vote_per_10">/10</string>
     <string name="reviews_title">Reviews</string>
     <string name="trailers_title">Trailers</string>
+    <string name="no_reviews">Reviews not available</string>
+    <string name="no_trailers">Trailers not available</string>
 </resources>
