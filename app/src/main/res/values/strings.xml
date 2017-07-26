@@ -9,4 +9,6 @@
     <string name="backdrop_description">Backdrop Image</string>
     <string name="minutes"> min</string>
     <string name="vote_per_10">/10</string>
+    <string name="reviews_title">Reviews</string>
+    <string name="trailers_title">Trailers</string>
 </resources>

@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -26,6 +25,9 @@ import butterknife.ButterKnife;
 import in.khofid.popularmovies.utilities.Movie;
 import in.khofid.popularmovies.utilities.MovieJsonUtils;
 import in.khofid.popularmovies.utilities.NetworkUtils;
+import in.khofid.popularmovies.utilities.Review;
+import in.khofid.popularmovies.utilities.ReviewAdapter;
+import in.khofid.popularmovies.utilities.ReviewJsonUtils;
 import in.khofid.popularmovies.utilities.Video;
 import in.khofid.popularmovies.utilities.VideosAdapter;
 import in.khofid.popularmovies.utilities.VideosJsonUtils;
@@ -42,12 +44,15 @@ public class MovieDetailActivity extends AppCompatActivity implements VideosAdap
     @BindView(R.id.pb_loading_indicator) ProgressBar mProgressDetail;
     @BindDrawable(R.drawable.movie_icon) Drawable movie_icon;
     @BindView(R.id.rv_videos) RecyclerView rvVideos;
+    @BindView(R.id.rv_reviews) RecyclerView rvReviews;
 
     String movieID;
     static String videos_path = "/videos";
+    static String reviews_path = "/reviews";
 
     public Context context = this;
     VideosAdapter mVideosAdapter;
+    ReviewAdapter mReviewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +64,11 @@ public class MovieDetailActivity extends AppCompatActivity implements VideosAdap
         rvVideos.setLayoutManager(new LinearLayoutManager(this));
         rvVideos.setNestedScrollingEnabled(false);
         rvVideos.setAdapter(mVideosAdapter);
+
+        mReviewAdapter = new ReviewAdapter(this);
+        rvReviews.setLayoutManager(new LinearLayoutManager(this));
+        rvReviews.setNestedScrollingEnabled(false);
+        rvReviews.setAdapter(mReviewAdapter);
 
         showMovieDetail();
     }
@@ -74,6 +84,7 @@ public class MovieDetailActivity extends AppCompatActivity implements VideosAdap
                 movieID = starter.getStringExtra(Intent.EXTRA_TEXT);
                 new FetchMovieTask().execute(movieID);
                 new FetchVideosTask().execute(movieID + videos_path);
+                new FetchReviewsTask().execute(movieID + reviews_path);
             }
         }
     }
@@ -155,6 +166,31 @@ public class MovieDetailActivity extends AppCompatActivity implements VideosAdap
         protected void onPostExecute(Video[] videos) {
             if(null != videos){
                 mVideosAdapter.setVideosData(videos);
+            }
+        }
+    }
+
+    private class FetchReviewsTask extends AsyncTask<String, Void, Review[]>{
+
+        @Override
+        protected Review[] doInBackground(String... params) {
+            if(params.length != 0){
+                URL reviewsUrl = NetworkUtils.buildUrl(params[0]);
+
+                try{
+                    String jsonReviews = NetworkUtils.getResponseFromHttpUrl(reviewsUrl);
+                    return ReviewJsonUtils.getSimpleStringFromJson(jsonReviews);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Review[] reviews) {
+            if(null != reviews){
+                mReviewAdapter.setReviewsData(reviews);
             }
         }
     }
