@@ -45,6 +45,8 @@ public class MovieDetailActivity extends AppCompatActivity implements VideosAdap
     @BindDrawable(R.drawable.movie_icon) Drawable movie_icon;
     @BindView(R.id.rv_videos) RecyclerView rvVideos;
     @BindView(R.id.rv_reviews) RecyclerView rvReviews;
+    @BindView(R.id.tv_no_trailers) TextView tvNoTrailers;
+    @BindView(R.id.tv_no_reviews) TextView tvNoReviews;
 
     String movieID;
     static String videos_path = "/videos";
@@ -164,8 +166,10 @@ public class MovieDetailActivity extends AppCompatActivity implements VideosAdap
 
         @Override
         protected void onPostExecute(Video[] videos) {
-            if(null != videos){
+            tvNoTrailers.setVisibility(View.VISIBLE);
+            if(videos.length != 0){
                 mVideosAdapter.setVideosData(videos);
+                tvNoTrailers.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -189,8 +193,10 @@ public class MovieDetailActivity extends AppCompatActivity implements VideosAdap
 
         @Override
         protected void onPostExecute(Review[] reviews) {
-            if(null != reviews){
+            tvNoReviews.setVisibility(View.VISIBLE);
+            if(reviews.length != 0){
                 mReviewAdapter.setReviewsData(reviews);
+                tvNoReviews.setVisibility(View.INVISIBLE);
             }
         }
     }
