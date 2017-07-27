@@ -29,14 +29,14 @@ public class Movie implements Parcelable {
     public Movie(int id, boolean adult, String backdrop_path, String homepage, String imdb_id, String original_language, String original_title, String overview, double popularity, String poster_path, String release_date, int runtime, String status, String tagline, String title, double vote_average, int vote_count) {
         this.id = id;
         this.adult = adult;
-        this.backdrop_path = NetworkUtils.IMG_URL_W342 + backdrop_path;
+        this.backdrop_path = backdrop_path;
         this.homepage = homepage;
         this.imdb_id = imdb_id;
         this.original_language = original_language;
         this.original_title = original_title;
         this.overview = overview;
         this.popularity = popularity;
-        this.poster_path = NetworkUtils.IMG_URL + poster_path;
+        this.poster_path = poster_path;
         this.release_date = release_date;
         this.runtime = runtime;
         this.status = status;

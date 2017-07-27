@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -60,12 +62,28 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
     }
 
     @Override
-    public void onBindViewHolder(MoviesAdapter.MoviesAdapterViewHolder holder, int position) {
-        Movies entry = mMovies[position];
+    public void onBindViewHolder(final MoviesAdapter.MoviesAdapterViewHolder holder, int position) {
+        final Movies entry = mMovies[position];
         Picasso.with(mContext)
-                .load(entry.poster_path)
+                .load(NetworkUtils.IMG_URL + entry.poster_path)
                 .placeholder(R.drawable.movie_icon)
-                .into(holder.moviePoster);
+                .error(R.drawable.movie_icon)
+                .networkPolicy(NetworkPolicy.OFFLINE)
+                .into(holder.moviePoster, new Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+                        Picasso.with(mContext)
+                                .load(NetworkUtils.IMG_URL + entry.poster_path)
+                                .placeholder(R.drawable.movie_icon)
+                                .error(R.drawable.movie_icon)
+                                .into(holder.moviePoster);
+                    }
+                });
         holder.movieTitle.setText(entry.title);
     }
 
