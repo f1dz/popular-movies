@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -110,11 +111,42 @@ public class MovieDetailActivity extends AppCompatActivity implements VideosAdap
         if(starter != null){
             if(starter.hasExtra(Intent.EXTRA_TEXT)){
                 movieID = starter.getStringExtra(Intent.EXTRA_TEXT);
-                new FetchMovieTask().execute(movieID);
-                new FetchVideosTask().execute(movieID + videos_path);
-                new FetchReviewsTask().execute(movieID + reviews_path);
+                if(NetworkUtils.isOnline(this)){
+                    new FetchMovieTask().execute(movieID);
+                    new FetchVideosTask().execute(movieID + videos_path);
+                    new FetchReviewsTask().execute(movieID + reviews_path);
+                }else{
+                    if(FavoriteDbHelper.isFavorited(mDb, Integer.parseInt(movieID))){
+                        mMovie = FavoriteDbHelper.getMovieData(mDb, Integer.parseInt(movieID));
+                        show(mMovie);
+                        mProgressDetail.setVisibility(View.INVISIBLE);
+                        tvNoReviews.setVisibility(View.VISIBLE);
+                        tvNoTrailers.setVisibility(View.VISIBLE);
+                        mDb.close();
+                    }
+                }
             }
         }
+    }
+
+    private void show(Movie movie){
+        Picasso.with(context).load(NetworkUtils.IMG_URL + movie.poster_path).placeholder(movie_icon).into(mImagePoster);
+        Picasso.with(context).load(NetworkUtils.IMG_URL_W342 + movie.backdrop_path).placeholder(movie_icon).into(mImageBackdrop);
+        mTvMovieTitle.setText(movie.title);
+        mTvReleaseDate.setText(movie.release_date);
+
+        String runtime = String.valueOf(movie.runtime) + getString(R.string.minutes);
+        mTvRuntime.setText(runtime);
+
+        String vote = String.valueOf(movie.vote_average) + getString(R.string.vote_per_10);
+        mTvVoteAverage.setText(vote);
+        mTvOverview.setText(movie.overview);
+        mProgressDetail.setVisibility(View.INVISIBLE);
+
+        // Check if Movie favorited
+        if(FavoriteDbHelper.isFavorited(mDb, Integer.parseInt(movieID)))
+            btnFavorite.setChecked(true);
+        else btnFavorite.setChecked(false);
     }
 
     @Override
@@ -171,24 +203,7 @@ public class MovieDetailActivity extends AppCompatActivity implements VideosAdap
         @Override
         protected void onPostExecute(Movie movie) {
             mMovie = movie;
-
-            Picasso.with(context).load(NetworkUtils.IMG_URL + movie.poster_path).placeholder(movie_icon).into(mImagePoster);
-            Picasso.with(context).load(NetworkUtils.IMG_URL_W342 + movie.backdrop_path).placeholder(movie_icon).into(mImageBackdrop);
-            mTvMovieTitle.setText(movie.title);
-            mTvReleaseDate.setText(movie.release_date);
-
-            String runtime = String.valueOf(movie.runtime) + getString(R.string.minutes);
-            mTvRuntime.setText(runtime);
-
-            String vote = String.valueOf(movie.vote_average) + getString(R.string.vote_per_10);
-            mTvVoteAverage.setText(vote);
-            mTvOverview.setText(movie.overview);
-            mProgressDetail.setVisibility(View.INVISIBLE);
-
-            // Check if Movie favorited
-            if(FavoriteDbHelper.isFavorited(mDb, Integer.parseInt(movieID)))
-                btnFavorite.setChecked(true);
-            else btnFavorite.setChecked(false);
+            show(movie);
         }
     }
 
