@@ -83,6 +83,17 @@
                 android:layout_toRightOf="@id/img_poster_detail"
                 android:textColor="#FAFAFA" />
 
+            <ToggleButton
+                android:id="@+id/btn_favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/btn_star"
+                android:layout_below="@id/tv_vote_average"
+                android:layout_toRightOf="@id/img_poster_detail"
+                android:layout_toEndOf="@id/img_poster_detail"
+                android:textOff="@string/favorite_off"
+                android:textOn="@string/favorite_on"/>
+
             <TextView
                 android:id="@+id/tv_overview"
                 android:layout_width="wrap_content"

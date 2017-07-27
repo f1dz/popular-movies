@@ -25,7 +25,7 @@ public class Movies implements Parcelable {
         this.vote_average = vote_average;
         this.title = title;
         this.popularity = popularity;
-        this.poster_path = NetworkUtils.IMG_URL + poster_path;
+        this.poster_path = poster_path;
         this.original_language = original_language;
         this.original_title = original_title;
         this.overview = overview;
