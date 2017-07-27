@@ -2,6 +2,7 @@ package in.khofid.popularmovies;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import java.net.URL;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import in.khofid.popularmovies.data.FavoriteDbHelper;
 import in.khofid.popularmovies.utilities.Movies;
 import in.khofid.popularmovies.utilities.MoviesAdapter;
 import in.khofid.popularmovies.utilities.MoviesJsonUtils;
@@ -39,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private static final String MOVIES_PARCEL = "movies_parcel";
 
+    SQLiteDatabase mDb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +59,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             loadMoviesFromBundle(savedInstanceState);
         else
             loadMoviesData();
+
+        FavoriteDbHelper dbHelper = new FavoriteDbHelper(this);
+        mDb = dbHelper.getWritableDatabase();
 
     }
 
@@ -76,8 +83,19 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             sortBy = SORT_RATING;
             loadMoviesData();
             return true;
+        }else if(id == R.id.show_favorites){
+            loadFavoriteMovies();
+            return true;
         }
+
         return super.onOptionsItemSelected(item);
+    }
+
+    private void loadFavoriteMovies(){
+        mMovies = FavoriteDbHelper.favoriteMovies(mDb);
+        showMoviesDataView();
+        mMoviesAdapter.setMoviesData(mMovies);
+        mLoading.setVisibility(View.INVISIBLE);
     }
 
     private void loadMoviesData(){
@@ -88,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     private void loadMoviesFromBundle(Bundle bundle) {
         showMoviesDataView();
         mMovies = (Movies[]) bundle.getParcelableArray(MOVIES_PARCEL);
-        showMoviesDataView();
         mMoviesAdapter.setMoviesData(mMovies);
 
     }
@@ -154,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         protected void onPostExecute(Movies[] movies) {
             mLoading.setVisibility(View.INVISIBLE);
             if(movies != null){
-                showMoviesDataView();
                 mMoviesAdapter.setMoviesData(movies);
             }
         }

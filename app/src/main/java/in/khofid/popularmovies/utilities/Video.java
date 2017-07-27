@@ -16,7 +16,7 @@ public class Video implements Parcelable {
     public String site;
     public int size;
     public String type;
-    private static String _URL = "https://www.youtube.com/watch?v=";
+    public static String YT_URL = "https://www.youtube.com/watch?v=";
     private static String IMG_URL = "https://img.youtube.com/vi/";
     private static String DEFAULT_QUALITY = "/mqdefault.jpg";
     public String url;
@@ -50,7 +50,7 @@ public class Video implements Parcelable {
         this.site = site;
         this.size = size;
         this.type = type;
-        this.url = _URL + url;
+        this.url = url;
         this.img_path = IMG_URL + key + DEFAULT_QUALITY;
     }
 
