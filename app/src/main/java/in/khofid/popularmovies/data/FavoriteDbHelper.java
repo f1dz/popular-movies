@@ -109,6 +109,36 @@ public class FavoriteDbHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Get Favorite movie as Movie
+     * @param db SQLiteDatabase
+     * @param movieId int
+     * @return Movie
+     */
+    public static Movie getMovieData(SQLiteDatabase db, int movieId){
+        Cursor cursor = getMovie(db, movieId);
+        cursor.moveToFirst();
+        return new Movie(
+                movieId,
+                false,
+                cursor.getString(cursor.getColumnIndex(FavoriteContract.FavoriteEntry.COLUMN_BACKDROP)),
+                "",
+                "",
+                "",
+                cursor.getString(cursor.getColumnIndex(FavoriteContract.FavoriteEntry.COLUMN_TITLE)),
+                cursor.getString(cursor.getColumnIndex(FavoriteContract.FavoriteEntry.COLUMN_OVERVIEW)),
+                cursor.getDouble(cursor.getColumnIndex(FavoriteContract.FavoriteEntry.COLUMN_POPULARITY)),
+                cursor.getString(cursor.getColumnIndex(FavoriteContract.FavoriteEntry.COLUMN_POSTER)),
+                cursor.getString(cursor.getColumnIndex(FavoriteContract.FavoriteEntry.COLUMN_RELEASE_DATE)),
+                cursor.getInt(cursor.getColumnIndex(FavoriteContract.FavoriteEntry.COLUMN_RUNTIME)),
+                "",
+                "",
+                cursor.getString(cursor.getColumnIndex(FavoriteContract.FavoriteEntry.COLUMN_TITLE)),
+                cursor.getDouble(cursor.getColumnIndex(FavoriteContract.FavoriteEntry.COLUMN_VOTE_AVERAGE)),
+                0
+        );
+    }
+
+    /**
      * Is movie favorited
      * @param db SQLiteDatabase
      * @param movieId int
