@@ -10,7 +10,10 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 import java.util.Scanner;
+
+import in.khofid.popularmovies.BuildConfig;
 
 /**
  * Created by ofid on 6/20/17.
@@ -24,7 +27,7 @@ public final class NetworkUtils {
     public static final String IMG_URL = "http://image.tmdb.org/t/p/w185";
     public static final String IMG_URL_W342 = "http://image.tmdb.org/t/p/w342";
 
-    private static String API = "";
+    private static String API = BuildConfig.THE_MOVIE_DB_API_TOKEN;
 
 
     public static URL buildUrl(String sort){
