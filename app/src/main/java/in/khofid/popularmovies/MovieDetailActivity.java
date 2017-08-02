@@ -116,8 +116,8 @@ public class MovieDetailActivity extends AppCompatActivity implements VideosAdap
                     new FetchVideosTask().execute(movieID + videos_path);
                     new FetchReviewsTask().execute(movieID + reviews_path);
                 }else{
-                    if(FavoriteDbHelper.isFavorited(mDb, Integer.parseInt(movieID))){
-                        mMovie = FavoriteDbHelper.getMovieData(mDb, Integer.parseInt(movieID));
+                    if(FavoriteDbHelper.isFavorited(getBaseContext(), Integer.parseInt(movieID))){
+                        mMovie = FavoriteDbHelper.getMovieData(getBaseContext(), Integer.parseInt(movieID));
                         show(mMovie);
                         mProgressDetail.setVisibility(View.INVISIBLE);
                         tvNoReviews.setVisibility(View.VISIBLE);
@@ -144,7 +144,7 @@ public class MovieDetailActivity extends AppCompatActivity implements VideosAdap
         mProgressDetail.setVisibility(View.INVISIBLE);
 
         // Check if Movie favorited
-        if(FavoriteDbHelper.isFavorited(mDb, Integer.parseInt(movieID)))
+        if(FavoriteDbHelper.isFavorited(getBaseContext(), Integer.parseInt(movieID)))
             btnFavorite.setChecked(true);
         else btnFavorite.setChecked(false);
     }
@@ -168,10 +168,10 @@ public class MovieDetailActivity extends AppCompatActivity implements VideosAdap
         @Override
         public void onClick(View view) {
             if (btnFavorite.isChecked()){
-                if(FavoriteDbHelper.addNewFavorite(mDb, mMovie) > 0)
+                if(FavoriteDbHelper.addNewFavorite(getBaseContext(), mMovie))
                     Toast.makeText(view.getContext(), mMovie.title + " saved to favorite", Toast.LENGTH_LONG).show();
             }else{
-                if(FavoriteDbHelper.removeFavorite(mDb, mMovie.id))
+                if(FavoriteDbHelper.removeFavorite(getBaseContext(), mMovie.id))
                     Toast.makeText(view.getContext(), mMovie.title + " removed from favorite", Toast.LENGTH_LONG).show();
             }
         }
