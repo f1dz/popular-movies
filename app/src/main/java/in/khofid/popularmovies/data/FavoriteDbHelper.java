@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 
 import in.khofid.popularmovies.utilities.Movie;
 import in.khofid.popularmovies.utilities.Movies;
@@ -68,11 +69,11 @@ public class FavoriteDbHelper extends SQLiteOpenHelper {
 
     /**
      * Add new favorite movie
-     * @param db SQLiteDatabase
+     * @param context Context
      * @param movie Movie
-     * @return long
+     * @return boolean
      */
-    public static long addNewFavorite(SQLiteDatabase db, Movie movie){
+    public static boolean addNewFavorite(Context context, Movie movie){
         ContentValues cv = new ContentValues();
         cv.put(FavoriteContract.FavoriteEntry.COLUMN_MOVIE_ID, movie.id);
         cv.put(FavoriteContract.FavoriteEntry.COLUMN_TITLE, movie.title);
@@ -83,39 +84,47 @@ public class FavoriteDbHelper extends SQLiteOpenHelper {
         cv.put(FavoriteContract.FavoriteEntry.COLUMN_RELEASE_DATE, movie.release_date);
         cv.put(FavoriteContract.FavoriteEntry.COLUMN_POSTER, movie.poster_path);
         cv.put(FavoriteContract.FavoriteEntry.COLUMN_BACKDROP, movie.backdrop_path);
-        return db.insert(FavoriteContract.FavoriteEntry.TABLE_NAME, null, cv);
+
+        Uri uri = context.getContentResolver().insert(FavoriteContract.FavoriteEntry.CONTENT_URI, cv);
+
+        return (null != uri);
     }
 
     /**
      * Delete movie from favorite
-     * @param db SQLiteDatabase
+     * @param context Context
      * @param id int ID's from database, not movie_id
      * @return boolean
      */
-    public static boolean removeFavorite(SQLiteDatabase db, int id){
-        return db.delete(FavoriteContract.FavoriteEntry.TABLE_NAME,
-                FavoriteContract.FavoriteEntry.COLUMN_MOVIE_ID + "=" + id, null) > 0;
+    public static boolean removeFavorite(Context context, int id){
+        String movieId = Integer.toString(id);
+
+        Uri uri = FavoriteContract.FavoriteEntry.CONTENT_URI;
+        uri = uri.buildUpon().appendPath(movieId).build();
+
+        return context.getContentResolver().delete(uri, null, null) != 0;
     }
 
     /**
      * Get Movie
-     * @param db SQLiteDatabase
+     * @param context Context
      * @param movieId int
      * @return Cursor
      */
-    public static Cursor getMovie(SQLiteDatabase db, int movieId){
-        return db.rawQuery("SELECT * FROM " + FavoriteContract.FavoriteEntry.TABLE_NAME +
-                " WHERE " + FavoriteContract.FavoriteEntry.COLUMN_MOVIE_ID + "=" + movieId, null);
+    public static Cursor getMovie(Context context, int movieId){
+        Uri uri = FavoriteContract.FavoriteEntry.CONTENT_URI;
+        uri = uri.buildUpon().appendPath(Integer.toString(movieId)).build();
+        return context.getContentResolver().query(uri, null, null, null, FavoriteContract.FavoriteEntry._ID + " DESC");
     }
 
     /**
      * Get Favorite movie as Movie
-     * @param db SQLiteDatabase
+     * @param context Context
      * @param movieId int
      * @return Movie
      */
-    public static Movie getMovieData(SQLiteDatabase db, int movieId){
-        Cursor cursor = getMovie(db, movieId);
+    public static Movie getMovieData(Context context, int movieId){
+        Cursor cursor = getMovie(context, movieId);
         cursor.moveToFirst();
         return new Movie(
                 movieId,
@@ -140,12 +149,12 @@ public class FavoriteDbHelper extends SQLiteOpenHelper {
 
     /**
      * Is movie favorited
-     * @param db SQLiteDatabase
+     * @param context Context
      * @param movieId int
      * @return boolean
      */
-    public static boolean isFavorited(SQLiteDatabase db, int movieId){
-        return getMovie(db, movieId).getCount() > 0;
+    public static boolean isFavorited(Context context, int movieId){
+        return getMovie(context, movieId).getCount() > 0;
     }
 
     public static Movies[] favoriteMovies(SQLiteDatabase db){
