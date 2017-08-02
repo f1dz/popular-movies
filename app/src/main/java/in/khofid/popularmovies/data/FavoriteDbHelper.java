@@ -50,7 +50,7 @@ public class FavoriteDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + FavoriteContract.FavoriteEntry.TABLE_NAME);
+        // Nothing to do, there is no new database nor new alter
         onCreate(sqLiteDatabase);
     }
 
